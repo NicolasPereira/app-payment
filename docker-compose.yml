@@ -9,19 +9,16 @@ services:
       - db
 
   db:
-    image: mysql
-    container_name: db
-    restart: unless-stopped
-    tty: true
+    image: mysql:5.7
+    environment:
+       MYSQL_ROOT_PASSWORD: secret
+       MYSQL_DATABASE: app
+       MYSQL_USER: root
+       MYSQL_PASSWORD: secret
     ports:
       - "3306:3306"
-    environment:
-      MYSQL_DATABASE: app-payment-db
-      MYSQL_USER: laravel
-      MYSQL_PASSWORD: laravel
-      MYSQL_ROOT_PASSWORD: rootpasswordapp
     volumes:
-      - "./.docker/dbdata:/var/lib/mysql/"
+      - 'mysqldb:/var/lib/mysql/'
 
   nginx:
     build: ./.docker/nginx
@@ -33,5 +30,4 @@ services:
     depends_on: 
       - web
 volumes:
-  applicationdb:
-    external: true
+  mysqldb:
