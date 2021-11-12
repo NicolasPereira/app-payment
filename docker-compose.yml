@@ -33,5 +33,5 @@ services:
     depends_on: 
       - web
 volumes:
-  mybd:
-    driver: local
+  applicationdb:
+    external: true
