@@ -20,7 +20,7 @@ class CreateAdminUser extends Command
      *
      * @var string
      */
-    protected $description = 'Create a new admin user';
+    protected $description = 'Create a new user';
 
     /**
      * Create a new command instance.
@@ -39,12 +39,13 @@ class CreateAdminUser extends Command
      */
     public function handle()
     {
-        $user = User::findOrNew(1);
-        $user->name = 'Admin';
+        $user = new User();
+        $user->name = 'Usuario';
         $user->email = $this->argument('email');
         $user->password = Hash::make($this->argument('password'));
+        $user->document = '123456789';
         $user->save();
 
-        $this->info("Usuário ADMIN criado: {$user->email}!");
+        $this->info("Usuário criado: {$user->email}!");
     }
 }
