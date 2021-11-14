@@ -58,8 +58,8 @@ class TransactionRepository
     {
         $payload = [
             'id' => Uuid::uuid4()->toString(),
-            'payer_account_id' => $payer->id,
-            'payee_account_id' => $payee->id,
+            'payer_account_id' => $payer->account->id,
+            'payee_account_id' => $payee->account->id,
             'value' => $data['value']
         ];
         return DB::transaction(function () use($payload){
