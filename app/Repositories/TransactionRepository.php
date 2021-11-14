@@ -25,7 +25,7 @@ class TransactionRepository
     public function index(array $data)
     {
         if($data['payee_id'] === $data['payer_id']){
-            throw new PayeeAndPayerIsSameException('Payee and Payeer is same ID', 406);
+            throw new PayeeAndPayerIsSameException('Payee and Payeer is same ID', 422);
         }
         if($this->verifyPayerIsShopkepper($data['payer_id'])){
             throw new ShopkepperMakeTransactionException('Shopkepper is not authorized to make a transactions, only receive', 401);
