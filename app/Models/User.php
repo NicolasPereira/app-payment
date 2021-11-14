@@ -13,8 +13,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    public static $_CLIENT = 'CLIENT';
-    public static $_SHOPKEEPER = 'SHOPKEEPER';
+    public static $_CLIENT = 'client';
+    public static $_SHOPKEEPER = 'shopkeeper';
     /**
      * The attributes that are mass assignable.
      *
