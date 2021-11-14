@@ -10,6 +10,8 @@ class Transaction extends Model
 {
     use HasFactory;
 
+    public $incrementing = false;
+
     protected $fillable = [
         'id',
         'payer_account_id',

@@ -10,6 +10,8 @@ class Account extends Model
 {
     use HasFactory;
 
+    public $incrementing = false;
+
     protected $fillable = [
         'id',
         'user_id',
