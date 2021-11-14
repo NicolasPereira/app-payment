@@ -12,6 +12,14 @@ class TransactionResource extends JsonResource
      * @param  \Illuminate\Http\Request  $request
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
+
+    /**
+     * The "transaction" wrapper that should be applied.
+     *
+     * @var string
+     */
+    public static $wrap = 'transaction';
+
     public function toArray($request)
     {
         return [
