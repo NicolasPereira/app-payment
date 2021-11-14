@@ -16,7 +16,7 @@ class CreateTransactionsTable extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('payer_account_id')->references('id')->on('accounts');
-            $table->foreignUuid('receiver_account_id')->references('id')->on('accounts');
+            $table->foreignUuid('payee_account_id')->references('id')->on('accounts');
             $table->decimal('value');
             $table->timestamps();
         });

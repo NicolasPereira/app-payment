@@ -13,7 +13,7 @@ class Transaction extends Model
     protected $fillable = [
         'id',
         'payer_account_id',
-        'receiver_account_id',
+        'payee_account_id',
         'value'
     ];
 
@@ -22,8 +22,8 @@ class Transaction extends Model
         return $this->belongsTo(Account::class, 'payer_account_id');
     }
 
-    public function accountReceiver() : belongsTo
+    public function accountPayee() : belongsTo
     {
-        return $this->belongsTo(Account::class,'receiver_account_id');
+        return $this->belongsTo(Account::class,'payee_account_id');
     }
 }

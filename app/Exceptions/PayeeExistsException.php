@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class ReceiverExistsException extends Exception
+class PayeeExistsException extends Exception
 {
     //
 }

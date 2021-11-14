@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Exceptions\AuthorizeServiceUnavailableException;
 use App\Exceptions\InsufficientCashException;
 use App\Exceptions\PayerExistsException;
-use App\Exceptions\ReceiverExistsException;
+use App\Exceptions\PayeeExistsException;
 use App\Exceptions\ShopkepperMakeTransactionException;
 use App\Models\Account;
 use App\Models\Transaction;
@@ -29,8 +29,8 @@ class TransactionRepository
             throw new PayerExistsException('Payer not found', 404);
         }
 
-        if(!$this->verifyReceiverExists($data['receiver_id'])){
-            throw new ReceiverExistsException('Receveier not found', 404);
+        if(!$this->verifyPayeeExists($data['payee_id'])){
+            throw new PayeeExistsException('Receveier not found', 404);
         }
         $payerUser = User::find($data['payer_id']);
         $payerAccount = $payerUser->account;
@@ -41,6 +41,13 @@ class TransactionRepository
         if (!$this->verifyAuthorizeTransaction()){
             throw new AuthorizeServiceUnavailableException('Service is unavailable! Try again in few minutes.', 503);
         }
+
+        $transaction = $this->makeTransaction();
+    }
+
+    public function makeTransaction(): Transaction
+    {
+
     }
 
     public function verifyPayerIsShopkepper(string $payer_id):bool
@@ -53,11 +60,11 @@ class TransactionRepository
         }
     }
 
-    public function verifyReceiverExists(string $receiver_id):bool
+    public function verifyPayeeExists(string $payee_id):bool
     {
         try {
-            $receiver = User::find($receiver_id);
-            return ($receiver);
+            $payee = User::find($payee_id);
+            return ($payee);
         }catch(\Exception $e) {
             return false;
         }
