@@ -8,7 +8,6 @@ use App\Exceptions\PayeeAndPayerIsSameException;
 use App\Exceptions\PayerExistsException;
 use App\Exceptions\PayeeExistsException;
 use App\Exceptions\ShopkepperMakeTransactionException;
-use App\Http\Resources\TransactionResource;
 use App\Models\Account;
 use App\Models\Transaction;
 use App\Models\User;
@@ -26,7 +25,7 @@ class TransactionRepository
         $this->serviceAuthorizeTransaction = $serviceAuthorizeTransaction;
         $this->serviceNotification = $serviceNotification;
     }
-    public function index(array $data): TransactionResource
+    public function index(array $data): Transaction
     {
         if($data['payee_id'] === $data['payer_id']){
             throw new PayeeAndPayerIsSameException('Payee and Payeer is same ID', 422);
@@ -57,7 +56,7 @@ class TransactionRepository
 
         $this->sendNotification();
 
-        return new TransactionResource($transaction);
+        return $transaction;
     }
 
     public function makeTransaction($payer, $payee, $data): Transaction
