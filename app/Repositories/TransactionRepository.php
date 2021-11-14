@@ -25,21 +25,21 @@ class TransactionRepository
         $this->serviceAuthorizeTransaction = $serviceAuthorizeTransaction;
         $this->serviceNotification = $serviceNotification;
     }
-    public function index(array $data)
+    public function index(array $data): Transaction
     {
         if($data['payee_id'] === $data['payer_id']){
             throw new PayeeAndPayerIsSameException('Payee and Payeer is same ID', 422);
         }
-        if($this->verifyPayerIsShopkepper($data['payer_id'])){
-            throw new ShopkepperMakeTransactionException('Shopkepper is not authorized to make a transactions, only receive', 401);
-        }
-
         if(!$this->verifyPayerExists($data['payer_id'])){
             throw new PayerExistsException('Payer not found', 404);
         }
 
         if(!$this->verifyPayeeExists($data['payee_id'])){
             throw new PayeeExistsException('Receveier not found', 404);
+        }
+
+        if($this->verifyPayerIsShopkepper($data['payer_id'])){
+            throw new ShopkepperMakeTransactionException('Shopkepper is not authorized to make a transactions, only receive', 401);
         }
         $payer = User::find($data['payer_id']);
         $payee = User::find($data['payee_id']);
