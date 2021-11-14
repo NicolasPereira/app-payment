@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Exceptions\AuthorizeServiceUnavailableException;
 use App\Exceptions\InsufficientCashException;
+use App\Exceptions\PayeeAndPayerIsSameException;
 use App\Exceptions\PayerExistsException;
 use App\Exceptions\PayeeExistsException;
 use App\Exceptions\ShopkepperMakeTransactionException;
@@ -11,17 +12,22 @@ use App\Models\Account;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\AuthorizeTransactionService;
+use Illuminate\Support\Facades\DB;
+use Ramsey\Uuid\Uuid;
 
 class TransactionRepository
 {
-    private $serviceAuthorizeTransaction;
-    public function __construction(AuthorizeTransactionService $serviceAuthorizeTransaction)
+    protected $serviceAuthorizeTransaction;
+    public function __construct(AuthorizeTransactionService $serviceAuthorizeTransaction)
     {
         $this->serviceAuthorizeTransaction = $serviceAuthorizeTransaction;
     }
     public function index(array $data)
     {
-        if(!$this->verifyPayerIsShopkepper($data['payer_id'])){
+        if($data['payee_id'] === $data['payer_id']){
+            throw new PayeeAndPayerIsSameException('Payee and Payeer is same ID', 406);
+        }
+        if($this->verifyPayerIsShopkepper($data['payer_id'])){
             throw new ShopkepperMakeTransactionException('Shopkepper is not authorized to make a transactions, only receive', 401);
         }
 
@@ -32,8 +38,9 @@ class TransactionRepository
         if(!$this->verifyPayeeExists($data['payee_id'])){
             throw new PayeeExistsException('Receveier not found', 404);
         }
-        $payerUser = User::find($data['payer_id']);
-        $payerAccount = $payerUser->account;
+        $payer = User::find($data['payer_id']);
+        $payee = User::find($data['payee_id']);
+        $payerAccount = $payer->account;
         if (!$this->checkAccountPayerBalance($payerAccount, $data['value'])) {
             throw new InsufficientCashException('The user dont have money to make the transaction', 422);
         }
@@ -42,12 +49,25 @@ class TransactionRepository
             throw new AuthorizeServiceUnavailableException('Service is unavailable! Try again in few minutes.', 503);
         }
 
-        $transaction = $this->makeTransaction();
+        $transaction = $this->makeTransaction($payer, $payee, $data);
+
+        return $transaction;
     }
 
-    public function makeTransaction(): Transaction
+    public function makeTransaction($payer, $payee, $data): Transaction
     {
-
+        $payload = [
+            'id' => Uuid::uuid4()->toString(),
+            'payer_account_id' => $payer->id,
+            'payee_account_id' => $payee->id,
+            'value' => $data['value']
+        ];
+        return DB::transaction(function () use($payload){
+            $transaction = Transaction::create($payload);
+            $transaction->accountPayer->removeCash($payload['value']);
+            $transaction->accountPayee->addCash($payload['value']);
+            return $transaction;
+        });
     }
 
     public function verifyPayerIsShopkepper(string $payer_id):bool
@@ -64,7 +84,7 @@ class TransactionRepository
     {
         try {
             $payee = User::find($payee_id);
-            return ($payee);
+            return (bool)$payee;
         }catch(\Exception $e) {
             return false;
         }
@@ -74,7 +94,7 @@ class TransactionRepository
     {
         try {
             $payer = User::find($payer_id);
-            return ($payer);
+            return (bool)$payer;
         }catch(\Exception $e) {
             return false;
         }
@@ -88,6 +108,6 @@ class TransactionRepository
     public function verifyAuthorizeTransaction():bool
     {
        $response = $this->serviceAuthorizeTransaction->verifyAuthorizeTransaction();
-       return $response['messsage'] == 'Autorizado';
+       return $response['message'] === 'Autorizado';
     }
 }
