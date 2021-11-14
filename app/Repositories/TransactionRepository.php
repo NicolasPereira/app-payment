@@ -12,15 +12,18 @@ use App\Models\Account;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\AuthorizeTransactionService;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 
 class TransactionRepository
 {
     protected $serviceAuthorizeTransaction;
-    public function __construct(AuthorizeTransactionService $serviceAuthorizeTransaction)
+    protected $serviceNotification;
+    public function __construct(AuthorizeTransactionService $serviceAuthorizeTransaction, NotificationService $serviceNotification)
     {
         $this->serviceAuthorizeTransaction = $serviceAuthorizeTransaction;
+        $this->serviceNotification = $serviceNotification;
     }
     public function index(array $data)
     {
@@ -50,6 +53,8 @@ class TransactionRepository
         }
 
         $transaction = $this->makeTransaction($payer, $payee, $data);
+
+        $this->sendNotification();
 
         return $transaction;
     }
@@ -109,5 +114,11 @@ class TransactionRepository
     {
        $response = $this->serviceAuthorizeTransaction->verifyAuthorizeTransaction();
        return $response['message'] === 'Autorizado';
+    }
+
+    public function sendNotification():bool
+    {
+        $response = $this->serviceNotification->sendNotification();
+        return $response['message'] === 'Success';
     }
 }
