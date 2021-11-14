@@ -25,8 +25,8 @@ class TransactionPostRequest extends FormRequest
     {
         return [
             'payer' => ['required', 'exists:users,id'],
-            'payee' => ['required', 'exists:users,id', 'different:payer_id'],
-            'value' => ['required', 'numeric'],
+            'payee' => ['required', 'exists:users,id', 'different:payer'],
+            'value' => ['required', 'min:0.01','numeric'],
         ];
     }
 }
