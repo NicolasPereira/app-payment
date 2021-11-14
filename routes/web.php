@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\TransactionController;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,9 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $transaction = \App\Models\Transaction::find('04b84d33-0e7e-4f1e-8026-eac6b4a7305f');
-    $response = new \App\Http\Resources\TransactionResource($transaction);
-    return json_encode($response);
     return view('welcome');
 });
 
