@@ -11,6 +11,7 @@ class Account extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'user_id',
         'balance'
     ];
