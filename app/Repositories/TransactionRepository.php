@@ -66,19 +66,19 @@ class TransactionRepository
             throw new AuthorizeServiceUnavailableException('Service is unavailable! Try again in few minutes.', 503);
         }
 
-        $transaction = $this->makeTransaction($payer, $payee, $data);
+        $transaction = $this->makeTransaction($payer, $payee, $data['$value']);
 
         $this->sendNotification();
 
         return $transaction;
     }
 
-    public function makeTransaction($payer, $payee, $data): Transaction
+    public function makeTransaction($payer, $payee, $value): Transaction
     {
         $payload = [
             'payer_account_id' => $payer->account->id,
             'payee_account_id' => $payee->account->id,
-            'value' => $data['value']
+            'value' => $value
         ];
         return DB::transaction(function () use($payer, $payee, $payload){
             $transaction = Transaction::create($payload);
