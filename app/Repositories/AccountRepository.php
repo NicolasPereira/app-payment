@@ -29,4 +29,10 @@ class AccountRepository
     {
         return $account->balance >= $value;
     }
+
+    public function checkAccountExists($user_id): bool
+    {
+        $account = Account::where('user_id', $user_id)->first();
+        return (bool)$account;
+    }
 }
