@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 
-class CreateAdminUser extends Command
+class CreateUserCommand extends Command
 {
     /**
      * The name and signature of the console command.
