@@ -64,7 +64,6 @@ class TransactionRepository
     public function makeTransaction($payer, $payee, $data): Transaction
     {
         $payload = [
-            'id' => Uuid::uuid4()->toString(),
             'payer_account_id' => $payer->account->id,
             'payee_account_id' => $payee->account->id,
             'value' => $data['value']
