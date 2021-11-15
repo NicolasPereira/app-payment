@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Exceptions\AccountNotFoundException;
 use App\Exceptions\AuthorizeServiceUnavailableException;
 use App\Exceptions\InsufficientCashException;
 use App\Exceptions\PayeeAndPayerIsSameException;
@@ -38,6 +39,14 @@ class TransactionRepository
 
         if(!$this->verifyPayeeExists($data['payee_id'])){
             throw new PayeeExistsException('Receveier not found', 404);
+        }
+
+        if(!$this->verifyAccountExists($data['payer_id'])){
+            throw new AccountNotFoundException('Payer account not found', 404);
+        }
+
+        if(!$this->verifyAccountExists($data['payee_id'])){
+            throw new AccountNotFoundException('Payee account not found', 404);
         }
 
         if($this->verifyPayerIsShopkepper($data['payer_id'])){
@@ -112,6 +121,10 @@ class TransactionRepository
        return $response['message'] === 'Autorizado';
     }
 
+    public function verifyAccountExists($user_id):bool
+    {
+        return $this->accountRepository->checkAccountExists($user_id);
+    }
     public function sendNotification():bool
     {
         $response = $this->serviceNotification->sendNotification();
