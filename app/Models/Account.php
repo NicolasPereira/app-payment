@@ -22,18 +22,4 @@ class Account extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-
-    public function addCash($value): void
-    {
-        $this->update([
-            'balance' => $this->attributes['balance'] + $value
-        ]);
-    }
-
-    public function removeCash($value): void
-    {
-        $this->update([
-            'balance' => $this->attributes['balance'] - $value
-        ]);
-    }
 }
