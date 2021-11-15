@@ -66,7 +66,7 @@ class TransactionRepository
             throw new AuthorizeServiceUnavailableException('Service is unavailable! Try again in few minutes.', 503);
         }
 
-        $transaction = $this->makeTransaction($payer, $payee, $data['$value']);
+        $transaction = $this->makeTransaction($payer, $payee, $data['value']);
 
         $this->sendNotification();
 
