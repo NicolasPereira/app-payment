@@ -20,10 +20,12 @@ class TransactionRepository
 {
     protected $serviceAuthorizeTransaction;
     protected $serviceNotification;
-    public function __construct(AuthorizeTransactionService $serviceAuthorizeTransaction, NotificationService $serviceNotification)
+    protected $accountRepository;
+    public function __construct(AuthorizeTransactionService $serviceAuthorizeTransaction, NotificationService $serviceNotification, AccountRepository $accountRepository)
     {
         $this->serviceAuthorizeTransaction = $serviceAuthorizeTransaction;
         $this->serviceNotification = $serviceNotification;
+        $this->accountRepository = $accountRepository;
     }
     public function index(array $data): Transaction
     {
@@ -44,7 +46,7 @@ class TransactionRepository
         $payer = User::find($data['payer_id']);
         $payee = User::find($data['payee_id']);
         $payerAccount = $payer->account;
-        if (!$this->checkAccountPayerBalance($payerAccount, $data['value'])) {
+        if (!$this->accountRepository->checkAccountBalance($payerAccount, $data['value'])) {
             throw new InsufficientCashException('The user dont have money to make the transaction', 422);
         }
 
@@ -67,10 +69,10 @@ class TransactionRepository
             'payee_account_id' => $payee->account->id,
             'value' => $data['value']
         ];
-        return DB::transaction(function () use($payload){
+        return DB::transaction(function () use($payer, $payee, $payload){
             $transaction = Transaction::create($payload);
-            $transaction->accountPayer->removeCash($payload['value']);
-            $transaction->accountPayee->addCash($payload['value']);
+            $this->accountRepository->removeCash($payer->account, $payload['value']);
+            $this->accountRepository->addCash($payee->account, $payload['value']);
             return $transaction;
         });
     }
@@ -103,11 +105,6 @@ class TransactionRepository
         }catch(\Exception $e) {
             return false;
         }
-    }
-
-    public function checkAccountPayerBalance(Account $account, $value)
-    {
-        return $account->balance >= $value;
     }
 
     public function verifyAuthorizeTransaction():bool
