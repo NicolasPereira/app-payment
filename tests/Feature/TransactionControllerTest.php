@@ -48,8 +48,8 @@ class TransactionControllerTest extends TestCase
     {
         $payer = $this->createUser(['profile' => 'shopkeeper']);
         $payee = $this->createUser();
-        $accountPayer = $this->createAccount(['user_id' => $payer->id]);
-        $accountPayee = $this->createAccount(['user_id' => $payee->id]);
+        $accountPayer = $payer->account;
+        $accountPayee = $payee->account;
         $payload = [
             'payer' => $payer->id,
             'payee' => $payee->id,
@@ -64,8 +64,9 @@ class TransactionControllerTest extends TestCase
     {
         $payer = $this->createUser();
         $payee = $this->createUser();
-        $accountPayer = $this->createAccount(['user_id' => $payer->id]);
-        $accountPayee = $this->createAccount(['user_id' => $payee->id]);
+        $accountPayer = $payer->account;
+        $this->addCashAccount($accountPayer, 1000);
+        $accountPayer->save();
 
         $payload = [
             'payer' => $payer->id,
@@ -81,8 +82,7 @@ class TransactionControllerTest extends TestCase
     {
         $payer = $this->createUser();
         $payee = $this->createUser();
-        $accountPayer = $this->createAccount(['user_id' => $payer->id]);
-        $accountPayee = $this->createAccount(['user_id' => $payee->id]);
+        $accountPayer = $payer->account;
 
         $payload = [
             'payer' => $payer->id,
@@ -101,8 +101,7 @@ class TransactionControllerTest extends TestCase
     {
         $payer = $this->createUser();
         $payee = $this->createUser();
-        $accountPayer = $this->createAccount(['user_id' => $payer->id]);
-        $accountPayee = $this->createAccount(['user_id' => $payee->id]);
+        $accountPayee = $payee->account;
 
         $payload = [
             'payer' => $payer->id,
@@ -129,15 +128,5 @@ class TransactionControllerTest extends TestCase
         ];
         $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
         $response->assertStatus(404);
-    }
-
-    private function createUser(array $options = [])
-    {
-        return User::factory()->create($options);
-    }
-
-    private function createAccount(array $options = [])
-    {
-        return Account::factory()->create($options);
     }
 }
