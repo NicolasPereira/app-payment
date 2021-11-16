@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Account;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class TransactionControllerTest extends TestCase
@@ -80,5 +79,25 @@ class TransactionControllerTest extends TestCase
 
         $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
         $response->assertStatus(422);
+    }
+
+    public function test_balance_payer_is_ok_after_transaction()
+    {
+        $payer = User::factory()->create();
+        $payee = User::factory()->create();
+        $accountPayer = Account::factory()->create(['user_id' => $payer->id]);
+        $accountPayee = Account::factory()->create(['user_id' => $payee->id]);
+
+        $payload = [
+            'payer' => $payer->id,
+            'payee' => $payee->id,
+            'value' => 100
+        ];
+        $expectedBalance = $accountPayer->balance - $payload['value'];
+        $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
+        $response->assertStatus(201);
+        $accountPayer = Account::find($accountPayer->id);
+
+        $this->assertTrue($accountPayer->balance == $expectedBalance, 'O saldo da conta {$accountPayer->id} está incorreto, o correto eh: {$accountPayer->balance} != $expectedBalance.');
     }
 }
