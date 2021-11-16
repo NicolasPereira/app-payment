@@ -11,6 +11,10 @@ use Tests\TestCase;
 class TransactionControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    private const REQUEST_HEADERS = [
+        'accept' => 'application/json'
+    ];
     /**
      * A basic feature test example.
      *
@@ -29,8 +33,7 @@ class TransactionControllerTest extends TestCase
             'payee' => 1,
             'value' => 10
         ];
-        $response = $this->withHeaders(['Accept' => 'application/json']);
-        $response = $this->post('api/transaction', $payload);
+        $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
         $response->assertStatus(422);
     }
 
@@ -42,8 +45,7 @@ class TransactionControllerTest extends TestCase
             'value' => 0.00
         ];
 
-        $response = $this->withHeaders(['Accept' => 'application/json']);
-        $response = $this->post('api/transaction', $payload);
+        $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
         $response->assertStatus(422);
     }
 
@@ -59,8 +61,7 @@ class TransactionControllerTest extends TestCase
             'value' => 0.01
         ];
 
-        $response = $this->withHeaders(['Accept' => 'application/json']);
-        $response = $this->post('api/transaction', $payload);
+        $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
         $response->assertStatus(401);
     }
 
@@ -77,8 +78,7 @@ class TransactionControllerTest extends TestCase
             'value' => 300.01
         ];
 
-        $response = $this->withHeaders(['Accept' => 'application/json']);
-        $response = $this->post('api/transaction', $payload);
+        $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
         $response->assertStatus(422);
     }
 }
