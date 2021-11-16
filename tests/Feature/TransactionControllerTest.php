@@ -28,7 +28,7 @@ class TransactionControllerTest extends TestCase
             'payee' => 1,
             'value' => 10
         ];
-        $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
+        $response = $this->post(route('transaction'),   $payload, self::REQUEST_HEADERS);
         $response->assertStatus(422);
     }
 
@@ -40,7 +40,7 @@ class TransactionControllerTest extends TestCase
             'value' => 0.00
         ];
 
-        $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
+        $response = $this->post(route('transaction'),   $payload, self::REQUEST_HEADERS);
         $response->assertStatus(422);
     }
 
@@ -57,7 +57,7 @@ class TransactionControllerTest extends TestCase
             'value' => 0.01
         ];
 
-        $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
+        $response = $this->post(route('transaction'),   $payload, self::REQUEST_HEADERS);
         $response->assertStatus(401);
     }
 
@@ -73,7 +73,7 @@ class TransactionControllerTest extends TestCase
             'payee' => $payee->id,
             'value' => 300.01
         ];
-        $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
+        $response = $this->post(route('transaction'),   $payload, self::REQUEST_HEADERS);
         $response->assertStatus(422);
     }
 
@@ -90,7 +90,7 @@ class TransactionControllerTest extends TestCase
             'value' => 100
         ];
         $expectedBalance = $accountPayer->balance - $payload['value'];
-        $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
+        $response = $this->post(route('transaction'),   $payload, self::REQUEST_HEADERS);
         $response->assertStatus(201);
         $accountPayer = Account::find($accountPayer->id);
 
@@ -111,7 +111,7 @@ class TransactionControllerTest extends TestCase
             'value' => 100
         ];
         $expectedBalance = $accountPayee->balance + $payload['value'];
-        $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
+        $response = $this->post(route('transaction'),   $payload, self::REQUEST_HEADERS);
         $response->assertStatus(201);
         $accountPayee = Account::find($accountPayee->id);
 
