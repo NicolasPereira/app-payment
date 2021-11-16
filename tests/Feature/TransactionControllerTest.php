@@ -60,7 +60,7 @@ class TransactionControllerTest extends TestCase
         $response->assertStatus(401);
     }
 
-    public function test_account_payer_balance()
+    public function test_account_payer_balance_can_have_money_make_transaction()
     {
         $payer = $this->createUser();
         $payee = $this->createUser();
