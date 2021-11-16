@@ -147,6 +147,9 @@ Caso retorne algum erro, este será o payload.
 ```
 
 # Testes
+Realizei um total de 8 testes validando o `TransactionController`, com esses testes consegui validar os erros que a
+API gera conforme cada contexto esperado.
+
 Para executar os testes desse projeto é necessário executar
 ```
     docker-compose exec web php artisan test
