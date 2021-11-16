@@ -7,6 +7,7 @@ use App\Exceptions\InsufficientCashException;
 use App\Exceptions\PayeeAndPayerIsSameException;
 use App\Exceptions\PayerExistsException;
 use App\Exceptions\ShopkepperMakeTransactionException;
+use App\Models\Account;
 use App\Repositories\AccountRepository;
 use App\Repositories\UserRepository;
 
@@ -21,34 +22,20 @@ class ServiceTransactionValidate
         $this->userRepository = $userRepository;
     }
 
-    public function validatePayerAndPayeeIsSame($payee, $payer)
+    public function validateExecute(array $data)
     {
-        if($payee === $payer){
-            throw new PayeeAndPayerIsSameException('Payee and Payeer is same ID', 422);
-        }
+        $this->validatePayerIsShopkepper($data['payer_id']);
+        $this->validateCheckBalance($data['payer_id'], $data['value']);
     }
 
-    public function validateUserExists($user)
-    {
-        if(!$this->userRepository->verifyUserExists($user)){
-            throw new PayerExistsException('Payer not found', 404);
-        }
-    }
-
-    public function validateAccountExists($user_id_account)
-    {
-        if(!$this->accountRepository->checkAccountExists($user_id_account)){
-            throw new AccountNotFoundException('Account not found', 404);
-        }
-    }
-
-    public function validatePayerIsShopkepper($user){
+    private function validatePayerIsShopkepper($user){
         if($this->userRepository->isShopkeeper($user)){
             throw new ShopkepperMakeTransactionException('Shopkepper is not authorized to make a transactions, only receive', 401);
         }
     }
 
-    public function validateCheckBalance($account, $value){
+    private function validateCheckBalance($user, $value){
+        $account  = Account::where('user_id', $user)->first();
         if(!$this->accountRepository->checkAccountBalance($account, $value)){
             throw new InsufficientCashException('The user dont have money to make the transaction', 422);
         }
