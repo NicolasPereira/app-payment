@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Account;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -23,7 +25,7 @@ class TransactionControllerTest extends TestCase
     {
         $payload = [
             'payer' => 1,
-            'payer' => 1,
+            'payee' => 1,
             'value' => 10
         ];
         $response = $this->withHeaders(['Accept' => 'application/json']);
@@ -35,7 +37,7 @@ class TransactionControllerTest extends TestCase
     {
         $payload = [
             'payer' => 1,
-            'payer' => 10,
+            'payee' => 10,
             'value' => 0.00
         ];
 
