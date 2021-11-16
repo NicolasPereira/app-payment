@@ -117,6 +117,20 @@ class TransactionControllerTest extends TestCase
         $this->assertTrue($accountPayee->balance == $expectedBalance, 'O saldo da conta {$accountPayee->id} está incorreto, o correto eh: {$accountPayee->balance} != $expectedBalance.');
     }
 
+    public function test_user_dont_have_account()
+    {
+        $payer = $this->createUser();
+        $payee = $this->createUser();
+
+        $payload = [
+            'payer' => $payer->id,
+            'payee' => $payee->id,
+            'value' => 100
+        ];
+        $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
+        $response->assertStatus(404);
+    }
+
     private function createUser(array $options = [])
     {
         return User::factory()->create($options);
