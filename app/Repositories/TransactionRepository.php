@@ -2,21 +2,12 @@
 
 namespace App\Repositories;
 
-use App\Exceptions\AccountNotFoundException;
 use App\Exceptions\AuthorizeServiceUnavailableException;
-use App\Exceptions\InsufficientCashException;
-use App\Exceptions\PayeeAndPayerIsSameException;
-use App\Exceptions\PayerExistsException;
-use App\Exceptions\PayeeExistsException;
-use App\Exceptions\ShopkepperMakeTransactionException;
-use App\Models\Account;
 use App\Models\Transaction;
-use App\Models\User;
 use App\Services\AuthorizeTransactionService;
 use App\Services\NotificationService;
 use App\Services\ServiceTransactionValidate;
 use Illuminate\Support\Facades\DB;
-use Ramsey\Uuid\Uuid;
 
 class TransactionRepository
 {
