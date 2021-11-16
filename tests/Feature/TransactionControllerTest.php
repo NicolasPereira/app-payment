@@ -62,4 +62,22 @@ class TransactionControllerTest extends TestCase
         $response = $this->post('api/transaction', $payload);
         $response->assertStatus(401);
     }
+
+    public function test_account_payer_balance()
+    {
+        $payer = User::factory()->create();
+        $payee = User::factory()->create();
+        $accountPayer = Account::factory()->create(['user_id' => $payer->id]);
+        $accountPayee = Account::factory()->create(['user_id' => $payee->id]);
+
+        $payload = [
+            'payer' => $payer->id,
+            'payee' => $payee->id,
+            'value' => 300.01
+        ];
+
+        $response = $this->withHeaders(['Accept' => 'application/json']);
+        $response = $this->post('api/transaction', $payload);
+        $response->assertStatus(422);
+    }
 }
