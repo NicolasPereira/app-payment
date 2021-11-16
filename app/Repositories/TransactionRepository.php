@@ -28,12 +28,12 @@ class TransactionRepository
     {
         $this->validateService->validateExecute($data);
 
-        $payer = $this->userRepository->find($data['payer_id']);
-        $payee = $this->userRepository->find($data['payee_id']);
-
         if (!$this->verifyAuthorizeTransaction()){
             throw new AuthorizeServiceUnavailableException('Service is unavailable! Try again in few minutes.', 503);
         }
+
+        $payer = $this->userRepository->find($data['payer_id']);
+        $payee = $this->userRepository->find($data['payee_id']);
 
         $transaction = $this->makeTransaction($payer, $payee, $data['value']);
 
