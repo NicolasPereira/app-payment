@@ -34,12 +34,12 @@ que pode estar disponível/indisponível.
 ## Como rodar este projeto
 
 ### Clone este repositório
-```
+```bash
     git clone https://github.com/NicolasPereira/app-payment.git
 ```
 
 ### Utilizando docker, crie um volume para o banco de dados
-```
+```bash
     docker create volume mysqldb
 ```
 
@@ -49,23 +49,23 @@ que pode estar disponível/indisponível.
 ```
 
 ### Instale os pacotes necessários
-```
+```bash
     docker-compose exec web composer install
 ```
 
 ### Gere o arquivo .env
 
-```
+```bash
     docker-compose exec web cp .env.example .env
 ```
 
 ### Crie a chave da aplicação
-```
+```bash
     docker-compose exec web php artisan key:generate
 ```
 
 ### Execute as migrations
-```
+```bash
     docker-compose exec web php artisan migrate
 ```
 
@@ -79,7 +79,7 @@ Essa aplicação aceita somente requisições do tipo `application/json`
 ### Payload de envio
 
 Para realizar a requisição é necessário informar este payload:
-```
+```json
 {
     "payer" : 4,
     "payee" : 15,
@@ -96,7 +96,7 @@ Sendo:
 ### Payload de resposta
 
 Ao executar uma transaction com sucesso será retornado os segeuintes dados:
-```
+```json
 {
     "transaction": {
         "id": "0a0d8828-ade5-4c1e-9e04-905b6ef4058d",
@@ -138,7 +138,7 @@ Payee:
 
 ## Erros
 Caso retorne algum erro, este será o payload.
-```
+```json
 {
     "errors": {
         "message": "error message"
@@ -151,6 +151,6 @@ Realizei um total de 8 testes validando o `TransactionController`, com esses tes
 API gera conforme cada contexto esperado.
 
 Para executar os testes desse projeto é necessário executar
-```
+```bash
     docker-compose exec web php artisan test
 ```
