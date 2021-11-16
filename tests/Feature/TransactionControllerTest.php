@@ -65,15 +65,13 @@ class TransactionControllerTest extends TestCase
         $payer = $this->createUser();
         $payee = $this->createUser();
         $accountPayer = $payer->account;
-        $this->addCashAccount($accountPayer, 1000);
-        $accountPayer->save();
+        $this->addCashAccount($accountPayer, 10);
 
         $payload = [
             'payer' => $payer->id,
             'payee' => $payee->id,
             'value' => 300.01
         ];
-
         $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
         $response->assertStatus(422);
     }
