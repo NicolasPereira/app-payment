@@ -26,18 +26,10 @@ class TransactionRepository
     }
     public function index(array $data): Transaction
     {
-        $this->validateService->validatePayerAndPayeeIsSame($data['payee_id'], $data['payer_id']);
-        $this->validateService->validateUserExists($data['payer_id']);
-        $this->validateService->validateUserExists($data['payee_id']);
-        $this->validateService->validateAccountExists($data['payer_id']);
-        $this->validateService->validateAccountExists($data['payee_id']);
-        $this->validateService->validatePayerIsShopkepper($data['payer_id']);
+        $this->validateService->validateExecute($data);
 
         $payer = $this->userRepository->find($data['payer_id']);
         $payee = $this->userRepository->find($data['payee_id']);
-        $payerAccount = $payer->account;
-
-        $this->validateService->validateCheckBalance($payerAccount, $data['value']);
 
         if (!$this->verifyAuthorizeTransaction()){
             throw new AuthorizeServiceUnavailableException('Service is unavailable! Try again in few minutes.', 503);
