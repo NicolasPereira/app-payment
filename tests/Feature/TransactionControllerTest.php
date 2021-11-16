@@ -30,4 +30,17 @@ class TransactionControllerTest extends TestCase
         $response = $this->post('api/transaction', $payload);
         $response->assertStatus(422);
     }
+
+    public function test_value_is_greather_than_zero()
+    {
+        $payload = [
+            'payer' => 1,
+            'payer' => 10,
+            'value' => 0.00
+        ];
+
+        $response = $this->withHeaders(['Accept' => 'application/json']);
+        $response = $this->post('api/transaction', $payload);
+        $response->assertStatus(422);
+    }
 }
