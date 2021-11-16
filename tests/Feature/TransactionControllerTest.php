@@ -18,4 +18,16 @@ class TransactionControllerTest extends TestCase
         $response = $this->withHeaders(['Accept' => '*/*'])->post('api/transaction');
         $response->assertStatus(406);
     }
+
+    public function test_payer_and_payee_equals()
+    {
+        $payload = [
+            'payer' => 1,
+            'payer' => 1,
+            'value' => 10
+        ];
+        $response = $this->withHeaders(['Accept' => 'application/json']);
+        $response = $this->post(route('postTransaction'), $payload);
+        $response->assertStatus(422);
+    }
 }
