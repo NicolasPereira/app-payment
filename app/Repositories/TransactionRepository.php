@@ -2,20 +2,12 @@
 
 namespace App\Repositories;
 
-use App\Exceptions\AccountNotFoundException;
 use App\Exceptions\AuthorizeServiceUnavailableException;
-use App\Exceptions\InsufficientCashException;
-use App\Exceptions\PayeeAndPayerIsSameException;
-use App\Exceptions\PayerExistsException;
-use App\Exceptions\PayeeExistsException;
-use App\Exceptions\ShopkepperMakeTransactionException;
-use App\Models\Account;
 use App\Models\Transaction;
-use App\Models\User;
 use App\Services\AuthorizeTransactionService;
 use App\Services\NotificationService;
+use App\Services\ServiceTransactionValidate;
 use Illuminate\Support\Facades\DB;
-use Ramsey\Uuid\Uuid;
 
 class TransactionRepository
 {
@@ -23,44 +15,21 @@ class TransactionRepository
     protected $serviceNotification;
     protected $accountRepository;
     protected $userRepository;
-    public function __construct(AuthorizeTransactionService $serviceAuthorizeTransaction, NotificationService $serviceNotification, AccountRepository $accountRepository, UserRepository $userRepository)
+    protected $validateService;
+    public function __construct(AuthorizeTransactionService $serviceAuthorizeTransaction, NotificationService $serviceNotification, AccountRepository $accountRepository, UserRepository $userRepository, ServiceTransactionValidate $validateService)
     {
         $this->serviceAuthorizeTransaction = $serviceAuthorizeTransaction;
         $this->serviceNotification = $serviceNotification;
         $this->accountRepository = $accountRepository;
         $this->userRepository = $userRepository;
+        $this->validateService = $validateService;
     }
     public function index(array $data): Transaction
     {
-        if($data['payee_id'] === $data['payer_id']){
-            throw new PayeeAndPayerIsSameException('Payee and Payeer is same ID', 422);
-        }
-        if(!$this->verifyUserExists($data['payer_id'])){
-            throw new PayerExistsException('Payer not found', 404);
-        }
+        $this->validateService->validateExecute($data);
 
-        if(!$this->verifyUserExists($data['payee_id'])){
-            throw new PayeeExistsException('Payee not found', 404);
-        }
-
-        if(!$this->verifyAccountExists($data['payer_id'])){
-            throw new AccountNotFoundException('Payer account not found', 404);
-        }
-
-        if(!$this->verifyAccountExists($data['payee_id'])){
-            throw new AccountNotFoundException('Payee account not found', 404);
-        }
-
-        if($this->verifyPayerIsShopkepper($data['payer_id'])){
-            throw new ShopkepperMakeTransactionException('Shopkepper is not authorized to make a transactions, only receive', 401);
-        }
-
-        $payer = $this->findUser($data['payer_id']);
-        $payee = $this->findUser($data['payee_id']);
-        $payerAccount = $payer->account;
-        if (!$this->accountRepository->checkAccountBalance($payerAccount, $data['value'])) {
-            throw new InsufficientCashException('The user dont have money to make the transaction', 422);
-        }
+        $payer = $this->userRepository->find($data['payer_id']);
+        $payee = $this->userRepository->find($data['payee_id']);
 
         if (!$this->verifyAuthorizeTransaction()){
             throw new AuthorizeServiceUnavailableException('Service is unavailable! Try again in few minutes.', 503);
@@ -88,31 +57,12 @@ class TransactionRepository
         });
     }
 
-    public function findUser($user_id): User
-    {
-        return $this->userRepository->find($user_id);
-    }
-
-    public function verifyPayerIsShopkepper(string $payer_id):bool
-    {
-        return $this->userRepository->isShopkeeper($payer_id);
-    }
-
-    public function verifyUserExists(string $user_id):bool
-    {
-        return $this->userRepository->verifyUserExists($user_id);
-    }
-
     public function verifyAuthorizeTransaction():bool
     {
        $response = $this->serviceAuthorizeTransaction->verifyAuthorizeTransaction();
        return $response['message'] === 'Autorizado';
     }
 
-    public function verifyAccountExists($user_id):bool
-    {
-        return $this->accountRepository->checkAccountExists($user_id);
-    }
     public function sendNotification():bool
     {
         $response = $this->serviceNotification->sendNotification();
