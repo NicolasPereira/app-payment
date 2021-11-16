@@ -76,7 +76,7 @@ Pare realizar a transação é necessário realizar uma requisição `POST` para
 ### Headers
 Essa aplicação aceita somente requisições do tipo `application/json`
 
-###Payload de envio
+### Payload de envio
 
 Para realizar a requisição é necessário informar este payload:
 ```
@@ -93,7 +93,7 @@ Sendo:
 - `payer` é o ID do usuário que está recebendo a transação caso o usuário não exista na base de dados ira retornar `HTTP CODE 422`
 - `value` é o valor da transação, caso seja menor ou igual a zero retornar `HTTP CODE 422`
 
-###Payload de resposta
+### Payload de resposta
 
 Ao executar uma transaction com sucesso será retornado os segeuintes dados:
 ```
