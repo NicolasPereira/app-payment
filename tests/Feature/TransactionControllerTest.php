@@ -27,7 +27,7 @@ class TransactionControllerTest extends TestCase
             'value' => 10
         ];
         $response = $this->withHeaders(['Accept' => 'application/json']);
-        $response = $this->post(route('postTransaction'), $payload);
+        $response = $this->post('api/transaction', $payload);
         $response->assertStatus(422);
     }
 }
