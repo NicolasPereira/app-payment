@@ -13,10 +13,9 @@ class TransactionControllerTest extends TestCase
      *
      * @return void
      */
-    public function test_example()
+    public function test_request_accept_headers()
     {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
+        $response = $this->withHeaders(['Accept' => '*/*'])->post('api/transaction');
+        $response->assertStatus(406);
     }
 }
