@@ -154,3 +154,7 @@ Para executar os testes desse projeto é necessário executar
 ```bash
     docker-compose exec web php artisan test
 ```
+
+# Autor
+Nicolas Pereira </br>
+[LinkedIn](https://www.linkedin.com/in/nicolas-pereira/) [Twitter](https://twitter.com/devnic_)
