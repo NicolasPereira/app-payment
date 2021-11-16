@@ -14,11 +14,7 @@ class TransactionControllerTest extends TestCase
     private const REQUEST_HEADERS = [
         'accept' => 'application/json'
     ];
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
+
     public function test_request_accept_headers()
     {
         $response = $this->withHeaders(['Accept' => '*/*'])->post('api/transaction');
@@ -50,10 +46,10 @@ class TransactionControllerTest extends TestCase
 
     public function test_payer_is_shopkeeper()
     {
-        $payer = User::factory()->create(['profile' => 'shopkeeper']);
-        $payee = User::factory()->create();
-        $accountPayer = Account::factory()->create(['user_id' => $payer->id]);
-        $accountPayee = Account::factory()->create(['user_id' => $payee->id]);
+        $payer = $this->createUser(['profile' => 'shopkeeper']);
+        $payee = $this->createUser();
+        $accountPayer = $this->createAccount(['user_id' => $payer->id]);
+        $accountPayee = $this->createAccount(['user_id' => $payee->id]);
         $payload = [
             'payer' => $payer->id,
             'payee' => $payee->id,
@@ -66,10 +62,10 @@ class TransactionControllerTest extends TestCase
 
     public function test_account_payer_balance()
     {
-        $payer = User::factory()->create();
-        $payee = User::factory()->create();
-        $accountPayer = Account::factory()->create(['user_id' => $payer->id]);
-        $accountPayee = Account::factory()->create(['user_id' => $payee->id]);
+        $payer = $this->createUser();
+        $payee = $this->createUser();
+        $accountPayer = $this->createAccount(['user_id' => $payer->id]);
+        $accountPayee = $this->createAccount(['user_id' => $payee->id]);
 
         $payload = [
             'payer' => $payer->id,
@@ -83,10 +79,10 @@ class TransactionControllerTest extends TestCase
 
     public function test_balance_payer_is_ok_after_transaction()
     {
-        $payer = User::factory()->create();
-        $payee = User::factory()->create();
-        $accountPayer = Account::factory()->create(['user_id' => $payer->id]);
-        $accountPayee = Account::factory()->create(['user_id' => $payee->id]);
+        $payer = $this->createUser();
+        $payee = $this->createUser();
+        $accountPayer = $this->createAccount(['user_id' => $payer->id]);
+        $accountPayee = $this->createAccount(['user_id' => $payee->id]);
 
         $payload = [
             'payer' => $payer->id,
@@ -103,10 +99,10 @@ class TransactionControllerTest extends TestCase
 
     public function test_balance_payee_is_ok_after_transaction()
     {
-        $payer = User::factory()->create();
-        $payee = User::factory()->create();
-        $accountPayer = Account::factory()->create(['user_id' => $payer->id]);
-        $accountPayee = Account::factory()->create(['user_id' => $payee->id]);
+        $payer = $this->createUser();
+        $payee = $this->createUser();
+        $accountPayer = $this->createAccount(['user_id' => $payer->id]);
+        $accountPayee = $this->createAccount(['user_id' => $payee->id]);
 
         $payload = [
             'payer' => $payer->id,
@@ -119,5 +115,15 @@ class TransactionControllerTest extends TestCase
         $accountPayee = Account::find($accountPayee->id);
 
         $this->assertTrue($accountPayee->balance == $expectedBalance, 'O saldo da conta {$accountPayee->id} está incorreto, o correto eh: {$accountPayee->balance} != $expectedBalance.');
+    }
+
+    private function createUser(array $options = [])
+    {
+        return User::factory()->create($options);
+    }
+
+    private function createAccount(array $options = [])
+    {
+        return Account::factory()->create($options);
     }
 }
