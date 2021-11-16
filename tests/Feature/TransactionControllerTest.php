@@ -49,6 +49,7 @@ class TransactionControllerTest extends TestCase
         $payer = $this->createUser(['profile' => 'shopkeeper']);
         $payee = $this->createUser();
         $accountPayer = $payer->account;
+        $this->addCashAccount($accountPayer, 10);
         $accountPayee = $payee->account;
         $payload = [
             'payer' => $payer->id,
@@ -81,6 +82,7 @@ class TransactionControllerTest extends TestCase
         $payer = $this->createUser();
         $payee = $this->createUser();
         $accountPayer = $payer->account;
+        $this->addCashAccount($accountPayer, 100);
 
         $payload = [
             'payer' => $payer->id,
@@ -99,7 +101,9 @@ class TransactionControllerTest extends TestCase
     {
         $payer = $this->createUser();
         $payee = $this->createUser();
+        $accountPayer = $payer->account;
         $accountPayee = $payee->account;
+        $this->addCashAccount($accountPayer, 100);
 
         $payload = [
             'payer' => $payer->id,
@@ -112,19 +116,5 @@ class TransactionControllerTest extends TestCase
         $accountPayee = Account::find($accountPayee->id);
 
         $this->assertTrue($accountPayee->balance == $expectedBalance, 'O saldo da conta {$accountPayee->id} está incorreto, o correto eh: {$accountPayee->balance} != $expectedBalance.');
-    }
-
-    public function test_user_dont_have_account()
-    {
-        $payer = $this->createUser();
-        $payee = $this->createUser();
-
-        $payload = [
-            'payer' => $payer->id,
-            'payee' => $payee->id,
-            'value' => 100
-        ];
-        $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
-        $response->assertStatus(404);
     }
 }
