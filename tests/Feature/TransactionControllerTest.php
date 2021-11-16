@@ -100,4 +100,24 @@ class TransactionControllerTest extends TestCase
 
         $this->assertTrue($accountPayer->balance == $expectedBalance, 'O saldo da conta {$accountPayer->id} está incorreto, o correto eh: {$accountPayer->balance} != $expectedBalance.');
     }
+
+    public function test_balance_payee_is_ok_after_transaction()
+    {
+        $payer = User::factory()->create();
+        $payee = User::factory()->create();
+        $accountPayer = Account::factory()->create(['user_id' => $payer->id]);
+        $accountPayee = Account::factory()->create(['user_id' => $payee->id]);
+
+        $payload = [
+            'payer' => $payer->id,
+            'payee' => $payee->id,
+            'value' => 100
+        ];
+        $expectedBalance = $accountPayee->balance + $payload['value'];
+        $response = $this->post('api/transaction', $payload, self::REQUEST_HEADERS);
+        $response->assertStatus(201);
+        $accountPayee = Account::find($accountPayee->id);
+
+        $this->assertTrue($accountPayee->balance == $expectedBalance, 'O saldo da conta {$accountPayee->id} está incorreto, o correto eh: {$accountPayee->balance} != $expectedBalance.');
+    }
 }
