@@ -144,8 +144,10 @@ class TransactionControllerTest extends TestCase
         $expectedBalance = $accountPayee->balance + $payload['value'];
         $response = $this->post(route('transaction'), $payload, self::REQUEST_HEADERS);
         $response->assertStatus(201);
-        $accountPayee = Account::find($accountPayee->id);
+        $this->assertDatabaseHas('accounts',[
+            'id' => $accountPayee->id,
+            'balance' => $expectedBalance
+        ]);
 
-        $this->assertTrue($accountPayee->balance == $expectedBalance, 'O saldo da conta {$accountPayee->id} está incorreto, o correto eh: {$accountPayee->balance} != $expectedBalance.');
     }
 }
