@@ -21,7 +21,7 @@ class TransactionController extends Controller
         $this->transactionRepository = $transactionRepository;
     }
 
-    public function index()
+    public function index(): TransactionCollection
     {
         return new TransactionCollection($this->transactionRepository->listAllTransaction());
     }
@@ -32,19 +32,19 @@ class TransactionController extends Controller
                 'payee_id' => $request->payee,
                 'value' => $request->value
         ];
-        try{
+        try {
             $transaction = $this->transactionRepository->creteTransaction($payload);
             return new TransactionResource($transaction);
-        }catch(\Exception $exception){
+        } catch (\Exception $exception) {
             return response()->json(['errors' => ['message' => $exception->getMessage()]], $exception->getCode());
         }
     }
 
     public function show(Transaction $transaction): TransactionResource
     {
-        try{
-                $response = new TransactionResource($transaction);
-        }catch (\Exception $exception){
+        try {
+            $response = new TransactionResource($transaction);
+        } catch (\Exception $exception) {
             return response()->json(["message" => $exception->getMessage()], 500);
         }
 
@@ -56,7 +56,7 @@ class TransactionController extends Controller
         try {
             $transaction->delete();
             return response()->json(["message" => "Transação excluída com sucesso."], 204);
-        } catch(\Exception $exception){
+        } catch (\Exception $exception) {
             return response()->json(["message" => "Ocorreu uma falha inesperada ao tentar excluir a transação."], 500);
         }
     }

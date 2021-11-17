@@ -43,7 +43,7 @@ class CreateUserCommand extends Command
 
         $profileType = $this->option('type');
 
-        if($profileType === 's') {
+        if ($profileType === 's') {
             $user->profile = 'shopkeeper';
         } else {
             $user->profile = 'client';

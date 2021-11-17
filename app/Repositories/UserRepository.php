@@ -28,9 +28,9 @@ class UserRepository
 
     public function find($user_id):User
     {
-        try{
+        try {
             return User::find($user_id);
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             return $exception;
         }
     }

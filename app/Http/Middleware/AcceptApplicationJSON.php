@@ -16,7 +16,7 @@ class AcceptApplicationJSON
      */
     public function handle(Request $request, Closure $next)
     {
-        if($request->accepts("*/*") || !$request->accepts("application/json")){
+        if ($request->accepts("*/*") || !$request->accepts("application/json")) {
             return response()->json([
                 'errors' =>
                     ['message' =>'O método de comunicação deve ser application/json']

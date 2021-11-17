@@ -25,15 +25,17 @@ class ServiceTransactionValidate
         $this->validateCheckBalance($data['payer_id'], $data['value']);
     }
 
-    private function validatePayerIsShopkepper($user){
-        if($this->userRepository->isShopkeeper($user)){
+    private function validatePayerIsShopkepper($user)
+    {
+        if ($this->userRepository->isShopkeeper($user)) {
             throw new ShopkepperMakeTransactionException('Shopkepper is not authorized to make a transactions, only receive', 401);
         }
     }
 
-    private function validateCheckBalance($user, $value){
+    private function validateCheckBalance($user, $value)
+    {
         $account  = Account::where('user_id', $user)->first();
-        if(!$this->accountRepository->checkAccountBalance($account, $value)){
+        if (!$this->accountRepository->checkAccountBalance($account, $value)) {
             throw new InsufficientCashException('The user dont have money to make the transaction', 422);
         }
     }

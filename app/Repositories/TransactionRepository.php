@@ -18,8 +18,13 @@ class TransactionRepository
     protected $accountRepository;
     protected $userRepository;
     protected $validateService;
-    public function __construct(AuthorizeTransactionService $serviceAuthorizeTransaction, NotificationService $serviceNotification, AccountRepository $accountRepository, UserRepository $userRepository, ServiceTransactionValidate $validateService)
-    {
+    public function __construct(
+        AuthorizeTransactionService $serviceAuthorizeTransaction,
+        NotificationService $serviceNotification,
+        AccountRepository $accountRepository,
+        UserRepository $userRepository,
+        ServiceTransactionValidate $validateService
+    ) {
         $this->serviceAuthorizeTransaction = $serviceAuthorizeTransaction;
         $this->serviceNotification = $serviceNotification;
         $this->accountRepository = $accountRepository;
@@ -35,7 +40,7 @@ class TransactionRepository
     {
         $this->validateService->validateExecute($data);
 
-        if (!$this->verifyAuthorizeTransaction()){
+        if (!$this->verifyAuthorizeTransaction()) {
             throw new AuthorizeServiceUnavailableException('Service is unavailable! Try again in few minutes.', 503);
         }
 
@@ -56,7 +61,7 @@ class TransactionRepository
             'payee_account_id' => $payee->account->id,
             'value' => $value
         ];
-        return DB::transaction(function () use($payer, $payee, $payload){
+        return DB::transaction(function () use($payer, $payee, $payload) {
             $transaction = Transaction::create($payload);
             $this->accountRepository->removeCash($payer->account, $payload['value']);
             $this->accountRepository->addCash($payee->account, $payload['value']);

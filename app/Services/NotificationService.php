@@ -22,7 +22,7 @@ class NotificationService
         try {
             $result = $this->client->request('GET', $url);
             return json_decode($result->getBody(), true);
-        }catch (GuzzleException $exception) {
+        } catch (GuzzleException $exception) {
             return ['message' => 'failure'];
         }
     }
