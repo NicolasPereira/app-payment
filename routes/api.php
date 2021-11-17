@@ -20,3 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/transaction',[TransactionController::class,'create'])->name('transaction');
+
+Route::get('/transaction',[TransactionController::class, 'index'])->name('all-transactions');
