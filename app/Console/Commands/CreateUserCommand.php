@@ -13,7 +13,7 @@ class CreateUserCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'user:create {email} {password}';
+    protected $signature = 'user:create {--t|type=: users profile type ((C) for client or (S) for shopkeeper)}';
 
     /**
      * The console command description.
@@ -39,13 +39,17 @@ class CreateUserCommand extends Command
      */
     public function handle()
     {
-        $user = new User();
-        $user->name = 'Usuario';
-        $user->email = $this->argument('email');
-        $user->password = Hash::make($this->argument('password'));
-        $user->document = '123456789';
+        $user = User::factory()->create();
+
+        $profileType = $this->option('type');
+
+        if($profileType === 's') {
+            $user->profile = 'shopkeeper';
+        }
+        $user->profile = 'client';
         $user->save();
 
         $this->info("Usuário criado: {$user->email}!");
+        $this->info("Usuário tipo: {$user->profile}!");
     }
 }
