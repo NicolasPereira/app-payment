@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TransactionPostRequest;
 use App\Http\Resources\TransactionCollection;
 use App\Http\Resources\TransactionResource;
+use App\Models\Transaction;
 use App\Repositories\TransactionRepository;
 class TransactionController extends Controller
 {
@@ -35,7 +36,16 @@ class TransactionController extends Controller
         }catch(\Exception $exception){
             return response()->json(['errors' => ['message' => $exception->getMessage()]], $exception->getCode());
         }
+    }
 
+    public function show(Transaction $transaction): TransactionResource
+    {
+        try{
+                $response = new TransactionResource($transaction);
+        }catch (\Exception $exception){
+            return response()->json(["message" => $exception->getMessage()], 500);
+        }
 
+        return $response;
     }
 }
