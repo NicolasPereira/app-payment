@@ -100,6 +100,11 @@ class TransactionControllerTest extends TestCase
         ];
         $response = $this->post(route('transaction'), $payload, self::REQUEST_HEADERS);
         $response->assertStatus(422);
+        $response->assertJson([
+            'errors' =>
+                ['message' => 'The user dont have money to make the transaction']
+        ],
+            422);
     }
 
     public function testUserAccountShouldCorrectAfterSendTransaction()
