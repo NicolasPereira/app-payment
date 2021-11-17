@@ -238,7 +238,7 @@ API gera conforme cada contexto esperado.
 
 Para executar os testes desse projeto é necessário executar
 ```bash
-    docker-compose exec web php artisan test
+docker-compose exec web php artisan test
 ```
 
 # Autor
