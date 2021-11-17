@@ -35,12 +35,12 @@ que pode estar disponível/indisponível.
 
 ### Clone este repositório
 ```bash
-    git clone https://github.com/NicolasPereira/app-payment.git
+git clone https://github.com/NicolasPereira/app-payment.git
 ```
 
 ### Utilizando docker, crie um volume para o banco de dados
 ```bash
-    docker create volume mysqldb
+docker create volume mysqldb
 ```
 
 ### Execute o docker para buildar o ambiente
@@ -50,31 +50,33 @@ que pode estar disponível/indisponível.
 
 ### Instale os pacotes necessários
 ```bash
-    docker-compose exec web composer install
+docker-compose exec web composer install
 ```
 
 ### Gere o arquivo .env
 
 ```bash
-    docker-compose exec web cp .env.example .env
+docker-compose exec web cp .env.example .env
 ```
 
 ### Crie a chave da aplicação
 ```bash
-    docker-compose exec web php artisan key:generate
+docker-compose exec web php artisan key:generate
 ```
 
 ### Execute as migrations
 ```bash
-    docker-compose exec web php artisan migrate
+docker-compose exec web php artisan migrate
 ```
 
 ## Aplicação
 
-Pare realizar a transação é necessário realizar uma requisição `POST` para `api/transaction`
-
 ### Headers
 Essa aplicação aceita somente requisições do tipo `application/json`
+
+### Criar Transação
+Pare realizar a transação é necessário realizar uma requisição `POST` para `api/transaction`
+
 
 ### Payload de envio
 
@@ -95,7 +97,7 @@ Sendo:
 
 ### Payload de resposta
 
-Ao executar uma transaction com sucesso será retornado os segeuintes dados:
+Ao executar uma transaction com sucesso será retornado o status code de `201 Created` e os seguintes dados:
 ```json
 {
     "transaction": {
@@ -136,7 +138,7 @@ Payee:
 - `email` é o email do usuário que pagou
 - `type` é o tipo de perfil, podendo ser para o payee `client` ou `shopkeeper`
 
-## Erros
+### Erros
 Caso retorne algum erro, este será o payload.
 ```json
 {
@@ -146,8 +148,92 @@ Caso retorne algum erro, este será o payload.
 }
 ```
 
+### Retornar todas as transactions
+Pare realizar a operação é necessário realizar uma requisição `GET` para `api/transaction`
+
+O retorno dessa requisição é uma Coleção de `Transaction` com o status code de `200 OK`
+```json
+{
+    "data": [
+        {
+            "id": "6b362d60-3d5f-41a9-8e97-1c3fcbbf4d6d",
+            "value": "0.12",
+            "created_at": "2021-11-17T01:33:45.000000Z",
+            "payer": {
+                "user": {
+                    "name": "Usuario",
+                    "email": "teste2@gmail.com",
+                    "type": "client"
+                },
+                "balance": "109.98"
+            },
+            "payee": {
+                "name": "Usuario",
+                "email": "testeobser32ver@gmail.com",
+                "type": "client"
+            }
+        },
+        {
+            "id": "d718530c-75ec-401f-988f-aaba53367215",
+            "value": "0.12",
+            "created_at": "2021-11-17T00:39:22.000000Z",
+            "payer": {
+                "user": {
+                    "name": "Usuario",
+                    "email": "testeobser32ver@gmail.com",
+                    "type": "client"
+                },
+                "balance": "1110.02"
+            },
+            "payee": {
+                "name": "Usuario",
+                "email": "teste2@gmail.com",
+                "type": "client"
+            }
+        }
+    ]
+}
+```
+## Retornar uma Transaction Especifica
+Pare realizar a operação é necessário realizar uma requisição `GET` para `api/transaction/:idTransaction`
+
+é importante informar `idTransaction` para trazer as informações da Transaction.
+
+O retorno dessa requisição é de `Transaction` com o status code de `200 OK`
+
+```json
+{
+    "transaction": {
+        "id": "6b362d60-3d5f-41a9-8e97-1c3fcbbf4d6d",
+        "value": "0.12",
+        "created_at": "2021-11-17T01:33:45.000000Z",
+        "payer": {
+            "user": {
+                "name": "Usuario",
+                "email": "teste2@gmail.com",
+                "type": "client"
+            },
+            "balance": "109.98"
+        },
+        "payee": {
+            "name": "Usuario",
+            "email": "testeobser32ver@gmail.com",
+            "type": "client"
+        }
+    }
+}
+```
+
+## Deletar uma Transaction
+
+Pare realizar a operação é necessário realizar uma requisição `DELETE` para `api/transaction/:idTransaction`
+
+é importante informar `idTransaction` para trazer as informações da Transaction.
+
+O retorno dessa requisição é o status code de `204 No Content`
+
 # Testes
-Realizei um total de 8 testes validando o `TransactionController`, com esses testes consegui validar os erros que a
+Realizei testes validando o `TransactionController`, com esses testes consegui validar os erros que a
 API gera conforme cada contexto esperado.
 
 Para executar os testes desse projeto é necessário executar
