@@ -79,6 +79,11 @@ class TransactionControllerTest extends TestCase
 
         $response = $this->post(route('transaction'), $payload, self::REQUEST_HEADERS);
         $response->assertStatus(401);
+        $response->assertJson([
+            'errors' =>
+                ['message' => 'Shopkepper is not authorized to make a transactions, only receive']
+        ],
+            401);
     }
 
     public function testUserShouldNotMakeTransactionIfWithoutMoney()
