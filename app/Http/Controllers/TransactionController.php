@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TransactionPostRequest;
+use App\Http\Resources\TransactionCollection;
 use App\Http\Resources\TransactionResource;
 use App\Repositories\TransactionRepository;
 class TransactionController extends Controller
@@ -17,6 +18,10 @@ class TransactionController extends Controller
         $this->transactionRepository = $transactionRepository;
     }
 
+    public function index()
+    {
+        return new TransactionCollection($this->transactionRepository->listAllTransaction());
+    }
     public function create(TransactionPostRequest $request)
     {
         $payload = [
@@ -25,7 +30,7 @@ class TransactionController extends Controller
                 'value' => $request->value
         ];
         try{
-            $transaction = $this->transactionRepository->index($payload);
+            $transaction = $this->transactionRepository->creteTransaction($payload);
             return new TransactionResource($transaction);
         }catch(\Exception $exception){
             return response()->json(['errors' => ['message' => $exception->getMessage()]], $exception->getCode());

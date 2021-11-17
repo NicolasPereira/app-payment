@@ -3,10 +3,12 @@
 namespace App\Repositories;
 
 use App\Exceptions\AuthorizeServiceUnavailableException;
+use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
 use App\Services\AuthorizeTransactionService;
 use App\Services\NotificationService;
 use App\Services\ServiceTransactionValidate;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 
 class TransactionRepository
@@ -24,7 +26,12 @@ class TransactionRepository
         $this->userRepository = $userRepository;
         $this->validateService = $validateService;
     }
-    public function index(array $data): Transaction
+
+    public function listAllTransaction(): AnonymousResourceCollection
+    {
+        return TransactionResource::collection(Transaction::all());
+    }
+    public function creteTransaction(array $data): Transaction
     {
         $this->validateService->validateExecute($data);
 
