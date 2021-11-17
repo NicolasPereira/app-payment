@@ -44,8 +44,8 @@ docker create volume mysqldb
 ```
 
 ### Execute o docker para buildar o ambiente
-```
-    docker-compose build
+```bash
+docker-compose build
 ```
 
 ### Instale os pacotes necessários
