@@ -57,6 +57,12 @@ class TransactionControllerTest extends TestCase
 
         $response = $this->post(route('transaction'), $payload, self::REQUEST_HEADERS);
         $response->assertStatus(422);
+        $response->assertJson([
+            'message' => 'The given data was invalid.',
+            'errors' => [
+                "value" => [ "The value must be at least 0.01."],
+                ],
+        ], 422);
     }
 
     public function testUserShouldNotIsShopkeeper()
