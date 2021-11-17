@@ -7,6 +7,8 @@ use App\Http\Resources\TransactionCollection;
 use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
 use App\Repositories\TransactionRepository;
+use Illuminate\Http\JsonResponse;
+
 class TransactionController extends Controller
 {
     /**
@@ -47,5 +49,15 @@ class TransactionController extends Controller
         }
 
         return $response;
+    }
+
+    public function delete(Transaction $transaction): JsonResponse
+    {
+        try {
+            $transaction->delete();
+            return response()->json(["message" => "Transação excluída com sucesso."], 204);
+        } catch(\Exception $exception){
+            return response()->json(["message" => "Ocorreu uma falha inesperada ao tentar excluir a transação."], 500);
+        }
     }
 }
