@@ -45,8 +45,9 @@ class CreateUserCommand extends Command
 
         if($profileType === 's') {
             $user->profile = 'shopkeeper';
+        } else {
+            $user->profile = 'client';
         }
-        $user->profile = 'client';
         $user->save();
 
         $this->info("Usuário criado: {$user->email}!");
