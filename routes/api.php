@@ -23,3 +23,4 @@ Route::post('/transaction',[TransactionController::class,'create'])->name('trans
 
 Route::get('/transaction',[TransactionController::class, 'index'])->name('all-transactions');
 Route::get('/transaction/{transaction}',[TransactionController::class, 'show'])->name('get-transactions');
+Route::delete('/transaction/{transaction}',[TransactionController::class, 'delete'])->name('delete-transaction');
