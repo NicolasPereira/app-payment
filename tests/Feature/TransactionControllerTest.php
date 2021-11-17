@@ -35,6 +35,16 @@ class TransactionControllerTest extends TestCase
         ];
         $response = $this->post(route('transaction'), $payload, self::REQUEST_HEADERS);
         $response->assertStatus(422);
+        $response->assertJson([
+            'message' => 'The given data was invalid.',
+                'errors' => [
+                    "payer" => [ "The selected payer is invalid."],
+                    "payee" => [
+                                "The selected payee is invalid.",
+                                "The payee and payer must be different."
+                        ],
+                    ],
+                ], 422);
     }
 
     public function testValueShouldIsGreaterThanZero()
