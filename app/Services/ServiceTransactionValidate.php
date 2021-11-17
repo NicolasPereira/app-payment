@@ -2,10 +2,7 @@
 
 namespace App\Services;
 
-use App\Exceptions\AccountNotFoundException;
 use App\Exceptions\InsufficientCashException;
-use App\Exceptions\PayeeAndPayerIsSameException;
-use App\Exceptions\PayerExistsException;
 use App\Exceptions\ShopkepperMakeTransactionException;
 use App\Models\Account;
 use App\Repositories\AccountRepository;
