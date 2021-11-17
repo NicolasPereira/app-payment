@@ -15,13 +15,13 @@ class TransactionControllerTest extends TestCase
         'accept' => 'application/json'
     ];
 
-    public function test_request_accept_headers()
+    public function testUserShouldNotSendRequestAcceptHeadersWrong()
     {
         $response = $this->withHeaders(['Accept' => '*/*'])->post('api/transaction');
         $response->assertStatus(406);
     }
 
-    public function test_payer_and_payee_equals()
+    public function testPayerShouldNotSamePayee()
     {
         $payload = [
             'payer' => 1,
@@ -32,7 +32,7 @@ class TransactionControllerTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function test_value_is_greather_than_zero()
+    public function testValueShouldIsGreaterThanZero()
     {
         $payload = [
             'payer' => 1,
@@ -44,7 +44,7 @@ class TransactionControllerTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function test_payer_is_shopkeeper()
+    public function testUserShouldNotIsShopkeeper()
     {
         $payer = $this->createUser(['profile' => 'shopkeeper']);
         $payee = $this->createUser();
@@ -61,7 +61,7 @@ class TransactionControllerTest extends TestCase
         $response->assertStatus(401);
     }
 
-    public function test_account_payer_balance_can_have_money_make_transaction()
+    public function testUserShouldNotMakeTransactionIfWithoutMoney()
     {
         $payer = $this->createUser();
         $payee = $this->createUser();
@@ -77,7 +77,7 @@ class TransactionControllerTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function test_balance_payer_is_ok_after_transaction()
+    public function testUserAccountShouldCorrectAfterSendTransaction()
     {
         $payer = $this->createUser();
         $payee = $this->createUser();
@@ -97,7 +97,7 @@ class TransactionControllerTest extends TestCase
         $this->assertTrue($accountPayer->balance == $expectedBalance, 'O saldo da conta {$accountPayer->id} está incorreto, o correto eh: {$accountPayer->balance} != $expectedBalance.');
     }
 
-    public function test_balance_payee_is_ok_after_transaction()
+    public function testUserAccountShouldCorrectAfterReceiveTransaction()
     {
         $payer = $this->createUser();
         $payee = $this->createUser();
