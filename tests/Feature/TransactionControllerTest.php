@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Account;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -148,6 +146,26 @@ class TransactionControllerTest extends TestCase
             'id' => $accountPayee->id,
             'balance' => $expectedBalance
         ]);
+    }
 
+    public function testTransactionShouldNotAppearInDatabaseAfterDelete()
+    {
+        //Arrange
+        $payer = $this->createUser();
+        $payee = $this->createUser();
+        $this->addCashAccount($payer->account, 100);
+        $transaction = $this->createTransaction([
+                    'payer_account_id' => $payer->account->id,
+                    'payee_account_id' => $payee->account->id,
+                    'value' => '10'
+                ]);
+        $this->saveEntity($transaction);
+        //Act
+        $response = $this->delete('api/transaction/' . $transaction->id, [],self::REQUEST_HEADERS);
+        //Assert
+        $response->assertStatus(204);
+        $this->assertDatabaseMissing('transactions',[
+            'id' => $transaction->id
+        ]);
     }
 }
