@@ -4,7 +4,7 @@ namespace App\Traits;
 
 use Ramsey\Uuid\Uuid;
 
-trait hasUuid
+trait HasUuid
 {
     public static function bootHasUuid()
     {
