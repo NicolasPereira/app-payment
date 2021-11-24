@@ -13,8 +13,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    public static $_CLIENT = 'client';
-    public static $_SHOPKEEPER = 'shopkeeper';
     /**
      * The attributes that are mass assignable.
      *
@@ -50,15 +48,5 @@ class User extends Authenticatable
     public function account(): hasOne
     {
         return $this->hasOne(Account::class);
-    }
-
-    public function getIsClientAttribute() : bool
-    {
-        return $this->profile === self::$_CLIENT;
-    }
-
-    public function getIsShopkeeperAttribute() : bool
-    {
-        return $this->profile === self::$_SHOPKEEPER;
     }
 }
